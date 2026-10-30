@@ -1,0 +1,9 @@
+.venv/
+.uv-cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.test-tmp/
+.mlflow/
+.dvc-remote/
+data/raw/model.pkl

@@ -1,0 +1,142 @@
+schema: '2.0'
+stages:
+  validate:
+    cmd: uv run dvc-crop-pipeline validate
+    deps:
+    - path: data/raw/Crop_recommendation.csv
+      hash: md5
+      md5: 5e743dd4cf49f84d23a904cd51c9b5b8
+      size: 150034
+    - path: pyproject.toml
+      hash: md5
+      md5: c7675bd1620f21979e751f90d16f7c7d
+      size: 1116
+    - path: src/crop_recommendation/data/validation.py
+      hash: md5
+      md5: 4f3a9927af368ed9e212782434aee50e
+      size: 13857
+    - path: src/crop_recommendation/pipeline/dvc_pipeline.py
+      hash: md5
+      md5: 6ababa604192d89c1b0cbaa2a0476200
+      size: 18427
+    - path: uv.lock
+      hash: md5
+      md5: 42df8432e7ec2832d56281e82f575e4e
+      size: 238504
+    outs:
+    - path: artifacts/dvc/validation.json
+      hash: md5
+      md5: 8a6c863082dee9c825b68d8d61d7523e
+      size: 2608
+  train:
+    cmd: uv run dvc-crop-pipeline train
+    deps:
+    - path: artifacts/dvc/validation.json
+      hash: md5
+      md5: 8a6c863082dee9c825b68d8d61d7523e
+      size: 2608
+    - path: data/raw/Crop_recommendation.csv
+      hash: md5
+      md5: 5e743dd4cf49f84d23a904cd51c9b5b8
+      size: 150034
+    - path: pyproject.toml
+      hash: md5
+      md5: c7675bd1620f21979e751f90d16f7c7d
+      size: 1116
+    - path: src/crop_recommendation/data/preprocessing.py
+      hash: md5
+      md5: 51f210d0a34d3827a5ce8872dfd7d226
+      size: 8239
+    - path: src/crop_recommendation/data/validation.py
+      hash: md5
+      md5: 4f3a9927af368ed9e212782434aee50e
+      size: 13857
+    - path: src/crop_recommendation/pipeline/dvc_pipeline.py
+      hash: md5
+      md5: 6ababa604192d89c1b0cbaa2a0476200
+      size: 18427
+    - path: src/crop_recommendation/training/train.py
+      hash: md5
+      md5: 2585635be722c745d8f889b6b5a515e7
+      size: 7252
+    - path: uv.lock
+      hash: md5
+      md5: 42df8432e7ec2832d56281e82f575e4e
+      size: 238504
+    params:
+      params.yaml:
+        model.n_estimators: 100
+        model.random_state: 42
+        split.random_state: 42
+        split.test_size: 0.2
+    outs:
+    - path: artifacts/dvc/model.skops
+      hash: md5
+      md5: 9533cc5639b81c181167b36cbba3d38b
+      size: 5832036
+    - path: artifacts/dvc/training.json
+      hash: md5
+      md5: 8acd868f7bc0375d142b2c2f0268c220
+      size: 2999
+  evaluate:
+    cmd: uv run dvc-crop-pipeline evaluate
+    deps:
+    - path: artifacts/dvc/model.skops
+      hash: md5
+      md5: 9533cc5639b81c181167b36cbba3d38b
+      size: 5832036
+    - path: artifacts/dvc/training.json
+      hash: md5
+      md5: 8acd868f7bc0375d142b2c2f0268c220
+      size: 2999
+    - path: artifacts/dvc/validation.json
+      hash: md5
+      md5: 8a6c863082dee9c825b68d8d61d7523e
+      size: 2608
+    - path: data/raw/Crop_recommendation.csv
+      hash: md5
+      md5: 5e743dd4cf49f84d23a904cd51c9b5b8
+      size: 150034
+    - path: pyproject.toml
+      hash: md5
+      md5: c7675bd1620f21979e751f90d16f7c7d
+      size: 1116
+    - path: src/crop_recommendation/data/preprocessing.py
+      hash: md5
+      md5: 51f210d0a34d3827a5ce8872dfd7d226
+      size: 8239
+    - path: src/crop_recommendation/data/validation.py
+      hash: md5
+      md5: 4f3a9927af368ed9e212782434aee50e
+      size: 13857
+    - path: src/crop_recommendation/pipeline/dvc_pipeline.py
+      hash: md5
+      md5: 6ababa604192d89c1b0cbaa2a0476200
+      size: 18427
+    - path: src/crop_recommendation/training/evaluate.py
+      hash: md5
+      md5: e443f62f7d6db1a0c5d583edc21aea02
+      size: 11734
+    - path: src/crop_recommendation/training/train.py
+      hash: md5
+      md5: 2585635be722c745d8f889b6b5a515e7
+      size: 7252
+    - path: uv.lock
+      hash: md5
+      md5: 42df8432e7ec2832d56281e82f575e4e
+      size: 238504
+    params:
+      params.yaml:
+        model.n_estimators: 100
+        model.random_state: 42
+        split.random_state: 42
+        split.test_size: 0.2
+    outs:
+    - path: artifacts/dvc/evaluation.json
+      hash: md5
+      md5: 7cfa4b1c893d86a501bd2b4a846c1f8e
+      size: 18627
+    - path: artifacts/dvc/metrics.json
+      hash: md5
+      md5: fb17ca4ebf6714f065504ec42b907acc
+      size: 178

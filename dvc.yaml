@@ -1,0 +1,55 @@
+stages:
+  validate:
+    cmd: uv run dvc-crop-pipeline validate
+    deps:
+      - data/raw/Crop_recommendation.csv
+      - pyproject.toml
+      - src/crop_recommendation/data/validation.py
+      - src/crop_recommendation/pipeline/dvc_pipeline.py
+      - uv.lock
+    outs:
+      - artifacts/dvc/validation.json
+
+  train:
+    cmd: uv run dvc-crop-pipeline train
+    deps:
+      - artifacts/dvc/validation.json
+      - data/raw/Crop_recommendation.csv
+      - pyproject.toml
+      - src/crop_recommendation/data/preprocessing.py
+      - src/crop_recommendation/data/validation.py
+      - src/crop_recommendation/pipeline/dvc_pipeline.py
+      - src/crop_recommendation/training/train.py
+      - uv.lock
+    params:
+      - split.test_size
+      - split.random_state
+      - model.n_estimators
+      - model.random_state
+    outs:
+      - artifacts/dvc/model.skops
+      - artifacts/dvc/training.json
+
+  evaluate:
+    cmd: uv run dvc-crop-pipeline evaluate
+    deps:
+      - artifacts/dvc/model.skops
+      - artifacts/dvc/training.json
+      - artifacts/dvc/validation.json
+      - data/raw/Crop_recommendation.csv
+      - pyproject.toml
+      - src/crop_recommendation/data/preprocessing.py
+      - src/crop_recommendation/data/validation.py
+      - src/crop_recommendation/pipeline/dvc_pipeline.py
+      - src/crop_recommendation/training/evaluate.py
+      - src/crop_recommendation/training/train.py
+      - uv.lock
+    params:
+      - split.test_size
+      - split.random_state
+      - model.n_estimators
+      - model.random_state
+    outs:
+      - artifacts/dvc/evaluation.json
+    metrics:
+      - artifacts/dvc/metrics.json

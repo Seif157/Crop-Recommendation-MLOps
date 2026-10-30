@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "crop-recommendation-mlops"
+version = "0.1.0"
+description = "Data validation, preparation, training, and evaluation foundation for the Crop Recommendation MLOps project"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "mlflow>=3.17,<3.18",
+    "pandas>=2.2,<3.0",
+    "pyyaml>=6.0,<7.0",
+    "scikit-learn>=1.5,<1.8",
+    "skops>=0.16,<0.17",
+]
+
+[project.scripts]
+serve-crop-mlflow = "crop_recommendation.tracking.server:main"
+track-crop-baseline = "crop_recommendation.tracking.command:main"
+validate-crop-data = "crop_recommendation.data.validation:main"
+dvc-crop-pipeline = "crop_recommendation.pipeline.dvc_pipeline:main"
+compare-crop-models = "crop_recommendation.experiments.command:main"
+
+[dependency-groups]
+dev = [
+    "dvc>=3.67,<3.68",
+    "pytest>=8.3,<9.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/crop_recommendation"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+markers = [
+    "integration: checks that use the repository's real dataset",
+]
